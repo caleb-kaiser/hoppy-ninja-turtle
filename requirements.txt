@@ -1,3 +1,9 @@
-opik
-comet_ml
-azure-search-documents
+opik>=0.2.0
+comet_ml>=3.35.0
+azure-search-documents>=11.4.0
+azure-identity>=1.12.0
+openai>=1.0.0
+python-dotenv>=1.0.0
+langchain>=0.1.0
+langchain-openai>=0.0.1
+numpy>=1.24.0
