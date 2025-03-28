@@ -55,7 +55,7 @@ class RetrieverService:
                 name="retrieve",
                 input={"query": query},
                 output={"output": output},
-                metrics={"latency_ms": (end_time - start_time) * 1000}
+                metadata={"latency_ms": (end_time - start_time) * 1000}
             )
             
             return output
@@ -64,7 +64,7 @@ class RetrieverService:
             self.current_trace.span(
                 name="retrieve",
                 input={"query": query},
-                exception=str(e)
+                metadata={"error": str(e)},
             )
             raise
     
@@ -107,7 +107,7 @@ class RetrieverService:
                 name="post_process",
                 input={"docs_container": docs_container},
                 output={"output": output},
-                metrics={"latency_ms": (end_time - start_time) * 1000}
+                metadata={"latency_ms": (end_time - start_time) * 1000}
             )
             
             return output
@@ -116,7 +116,7 @@ class RetrieverService:
             self.current_trace.span(
                 name="post_process",
                 input={"docs_container": docs_container},
-                exception=str(e)
+                metadata={"error": str(e)},
             )
             raise
     
@@ -158,7 +158,7 @@ Answer:"""
                 name="construct_prompt",
                 input={"docs_container": docs_container},
                 output={"output": output},
-                metrics={"latency_ms": (end_time - start_time) * 1000}
+                metadata={"latency_ms": (end_time - start_time) * 1000}
             )
             
             return output
@@ -167,7 +167,7 @@ Answer:"""
             self.current_trace.span(
                 name="construct_prompt",
                 input={"docs_container": docs_container},
-                exception=str(e)
+                metadata={"error": str(e)}
             )
             raise
     
@@ -210,7 +210,7 @@ Answer:"""
                 name="call_llm",
                 input={"prompt": prompt, "query": query},
                 output={"output": output},
-                metrics={
+                metadata={
                     "latency_ms": (end_time - start_time) * 1000,
                     "prompt_tokens": response.usage.prompt_tokens,
                     "completion_tokens": response.usage.completion_tokens,
@@ -224,7 +224,7 @@ Answer:"""
             self.current_trace.span(
                 name="call_llm",
                 input={"prompt_container": prompt_container, "query": query},
-                exception=str(e)
+                metadata={"error": str(e)}
             )
             raise
     
@@ -257,15 +257,9 @@ Answer:"""
                 "trace_id": self.current_trace.id
             }
             
-            # Close the trace
-            self.current_trace.close()
             
             return final_response
         except Exception as e:
-            # Record the exception in the trace
-            if self.current_trace:
-                self.current_trace.exception(str(e))
-                self.current_trace.close()
             
             # Re-raise the exception
             raise
