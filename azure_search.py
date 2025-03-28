@@ -45,9 +45,7 @@ class AzureSearchRetriever:
         # Execute the search
         results = self.search_client.search(
             search_text=query,
-            query_type=QueryType.SEMANTIC,
-            query_language="en-us",
-            semantic_configuration_name="default",
+            query_type=QueryType.KEYWORD,
             filter=filter,
             top=self.top_k,
             include_total_count=True
